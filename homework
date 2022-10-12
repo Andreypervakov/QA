@@ -1,0 +1,66 @@
+/*Linux pc 5.15.0-40-generic #43-Ubuntu SMP Wed Jun 15 12:54:21 UTC 2022   *x86_64 x86_64 x86_64 GNU/Linux
+* pa4admin ver. 6.11
+*Application Mode Desktop
+*Current User pgadmin4@pgadmin.org
+* 
+*
+*/
+		/*Exercise #1*/
+/*SELECT name ,pr.value FROM goods g
+   INNER JOIN prices pr ON pr.goods_id = g.id
+   WHERE pr.value IN (
+      SELECT MAX(value) FROM prices            
+);*/		
+SELECT name AS ИМЯ,pr.value AS ЦЕНА FROM goods g
+   INNER JOIN prices pr ON pr.goods_id = g.id
+   WHERE pr.value IN (
+      SELECT MAX(value) FROM prices            
+);
+
+		/*Exercise #2*/
+/*SELECT g.name, pr.value, q.value FROM goods g
+   INNER JOIN prices pr ON pr.goods_id = g.id 
+   INNER JOIN quantity q ON q.goods_id = g.id
+   WHERE q.value IN (
+      SELECT value FROM quantity
+      WHERE value = 0
+);*/		
+SELECT g.name AS Имя, pr.value AS Цена FROM goods g
+   INNER JOIN prices pr ON pr.goods_id = g.id 
+   INNER JOIN quantity q ON q.goods_id = g.id
+   WHERE q.value = 0;  
+		
+		
+		/*Exercise #3*/
+/*SELECT m.name, pr.value FROM manufacturer m
+   INNER JOIN suppliers s ON s.manufacturer_id = m.id 
+   INNER JOIN goods g ON g.supplier_id = s.id
+   INNER JOIN prices pr ON pr.goods_id = g.id
+WHERE pr.value = (
+   SELECT MAX(value) FROM prices
+);*/
+SELECT * FROM
+(SELECT  man.name AS Производитель, ROUND(AVG (value), 2)  apr  FROM goods gs  
+JOIN suppliers s ON s.id = gs.supplier_id 
+JOIN manufacturer  man ON s.manufacturer_id  =  man.id
+JOIN prices pr ON gs.id  =  pr.goods_id
+GROUP BY  man.name)  mul 
+WHERE apr = (SELECT MAX (m_apr.apr) FROM(SELECT  man.name, ROUND(AVG (value), 2)  apr FROM goods gs   
+JOIN suppliers s ON s.id = gs.supplier_id 
+JOIN manufacturer  man ON s.manufacturer_id  =  man.id
+JOIN prices pr ON gs.id  =  pr.goods_id 
+GROUP BY  man.name	) m_apr)
+
+   
+		
+		/*Exercise #4*/
+/*SELECT m.name, pr.value, m.location, g.name, s.name  FROM manufacturer m
+   INNER JOIN suppliers s ON s.manufacturer_id = m.id AND m.location = 'Moscow' 
+   INNER JOIN goods g ON g.supplier_id = s.id
+   INNER JOIN prices pr ON pr.goods_id = g.id */		
+SELECT g.name AS Имя_Товара, pr.value AS Цена,  m.name  AS Завод_Производитель
+ FROM manufacturer m
+    JOIN suppliers s ON s.manufacturer_id = m.id AND m.location = 'Moscow' 
+    LEFT JOIN goods g ON g.supplier_id = s.id
+    LEFT JOIN prices pr ON pr.goods_id = g.id ;
+   
